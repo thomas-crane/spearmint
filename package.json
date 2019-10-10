@@ -1,0 +1,60 @@
+{
+  "name": "spearmint",
+  "version": "0.1.0",
+  "description": "A statically typed, simple language.",
+  "main": "lib/smc.js",
+  "scripts": {
+    "compile": "tsc -p .",
+    "lint": "npm run lint:tslint && npm run lint:editorconfig",
+    "lint:tslint": "tslint -p .",
+    "lint:editorconfig": "editorconfig-checker ./src",
+    "test": "nyc mocha",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomas-crane/spearmint.git"
+  },
+  "keywords": [
+    "programming-language",
+    "compiler"
+  ],
+  "author": "Thomas Crane <thomasgcrane@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thomas-crane/spearmint/issues"
+  },
+  "homepage": "https://github.com/thomas-crane/spearmint#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.3",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.12",
+    "chai": "^4.2.0",
+    "coveralls": "^3.0.6",
+    "editorconfig-checker": "^3.0.3",
+    "mocha": "^6.2.1",
+    "nyc": "^14.1.1",
+    "source-map-support": "^0.5.13",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.4"
+  }
+}
