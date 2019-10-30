@@ -9,7 +9,7 @@
     - [Objects](#objects)
   - [Control flow](#control-flow)
     - [If statements](#if-statements)
-      - [Logical and equality operators](#logical-and-equality-operators)
+      - [Equality operators](#equality-operators)
     - [For loops](#for-loops)
       - [Ranges](#ranges)
       - [Collections](#collections)
@@ -108,13 +108,13 @@ if x > 10
 
 is not valid. This is the case for all other control flow statements as well.
 
-#### Logical and equality operators
+#### Equality operators
 
-One notable difference between Spearmint and other C style languages is that Spearmint uses keywords for logical and equality operators. For example,
+One notable difference between Spearmint and other C style languages is that Spearmint uses keywords for equality operators. For example,
 
 ```sm
-if something or otherThing {
-  if this is that and foo is! bar {
+if something || otherThing {
+  if this is that && foo is! bar {
     // do something
   }
 }
