@@ -14,6 +14,7 @@
       - [Ranges](#ranges)
       - [Collections](#collections)
     - [While loops](#while-loops)
+      - [Stop and next](#stop-and-next)
   - [Functions](#functions)
     - [Anonymous functions](#anonymous-functions)
   - [When](#when)
@@ -193,6 +194,37 @@ while x < 10 {
   x += 1;
 }
 
+```
+
+#### Stop and next
+
+Sometimes it is necessary to skip an iteration of a loop, or break out of the loop completely. In these cases, the `stop` and `next` keywords can be used
+
+The `stop` keyword can be used to break out of the current loop. It can be used in both `while` and `for` statements
+
+```sm
+let! i = 0;
+
+while true {
+  i += 1;
+  if i is 10 {
+    stop;
+  }
+}
+
+// i is now 10.
+
+```
+
+`next` can be used to continue the loop, but stop execution of the current iteration.
+
+```sm
+for x in 0..1000 {
+  if x % 2 is! 0 {
+    next;
+  }
+  print('${x} is even');
+}
 ```
 
 ## Functions
