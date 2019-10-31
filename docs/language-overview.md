@@ -9,7 +9,6 @@
     - [Objects](#objects)
   - [Control flow](#control-flow)
     - [If statements](#if-statements)
-      - [Equality operators](#equality-operators)
     - [For loops](#for-loops)
       - [Ranges](#ranges)
       - [Collections](#collections)
@@ -108,29 +107,6 @@ if x > 10
 
 is not valid. This is the case for all other control flow statements as well.
 
-#### Equality operators
-
-One notable difference between Spearmint and other C style languages is that Spearmint uses keywords for equality operators. For example,
-
-```sm
-if something || otherThing {
-  if this is that && foo is! bar {
-    // do something
-  }
-}
-
-```
-
-would be the Spearmint equivalent of the following code in other languages
-
-```txt
-if something || otherThing {
-  if this == that && foo != bar {
-
-  }
-}
-```
-
 ### For loops
 
 For loops are declared using the "for ... in" style. For loops can be used to iterate over a collection of items such as an array, or through a range of numbers.
@@ -207,7 +183,7 @@ let! i = 0;
 
 while true {
   i += 1;
-  if i is 10 {
+  if i == 10 {
     stop;
   }
 }
@@ -220,7 +196,7 @@ while true {
 
 ```sm
 for x in 0..1000 {
-  if x % 2 is! 0 {
+  if x % 2 != 0 {
     next;
   }
   print('${x} is even');
