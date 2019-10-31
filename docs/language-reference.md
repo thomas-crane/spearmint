@@ -9,15 +9,19 @@
 + `let`
 + `let!`
 + `if`
-+ `is`
-+ `is!`
-+ `or`
-+ `and`
++ `else`
 + `for`
 + `in`
 + `while`
++ `stop`
++ `next`
 + `fn`
 + `return`
++ `when`
++ `class`
++ `mut`
++ `private`
++ `open`
 
 ## Operators
 
@@ -43,11 +47,11 @@ Precedence | Operator name | Associativity | Example
 6 | Less than or equal to | left-to-right | `… <= …`
 6 | Greater than | left-to-right | `… > …`
 6 | Greater than or equal to | left-to-right | `… >= …`
-5 | Equality | left-to-right | `… is …`
-5 | Inequality | left-to-right | `… is! …`
+5 | Equality | left-to-right | `… == …`
+5 | Inequality | left-to-right | `… != …`
 4 | Bitwise AND | left-to-right | `… & …`
 4 | Bitwise XOR | left-to-right | `… ^ …`
 4 | Bitwise OR | left-to-right | `… | …`
-3 | Logical AND | left-to-right | `… and …`
-2 | Logical OR | left-to-right | `… or …`
+3 | Logical AND | left-to-right | `… && …`
+2 | Logical OR | left-to-right | `… || …`
 1 | Assignment | left-to-right | `… = …`<br>`… += …`<br>`… -= …`<br>`… *= …`<br>`… /= …`<br>`… &= …`<br>`… ^= …`<br>`… |= …`
