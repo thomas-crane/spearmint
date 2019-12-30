@@ -7,6 +7,7 @@
     - [Strings](#strings)
     - [Booleans](#booleans)
     - [Objects](#objects)
+    - [Null (or the lack thereof)](#null-or-the-lack-thereof)
   - [Control flow](#control-flow)
     - [If statements](#if-statements)
     - [For loops](#for-loops)
@@ -21,12 +22,14 @@
     - [Members](#members)
     - [Methods](#methods)
     - [Constructors](#constructors)
-      - [Auto generated constructors](#auto-generated-constructors)
-      - [Calling the constructor](#calling-the-constructor)
+    - [Static methods](#static-methods)
+    - [Pre assigned members](#pre-assigned-members)
     - [Inheritance](#inheritance)
       - [Open classes](#open-classes)
     - [Abstract classes](#abstract-classes)
+      - [Abstract members and methods](#abstract-members-and-methods)
   - [Interfaces](#interfaces)
+  - [Enums](#enums)
 
 ## Variables
 
@@ -60,7 +63,7 @@ In most cases, the compiler can infer the type of the variable from its usage. H
 
 ### Numbers
 
-As we have already seen, the `num` type is one of the primitive types in Spearmint. There is no distinction between integers and floating point numbers, every number simply takes on the `num` type which encapsulates all numbers.
+As we have already seen, the `num` type is one of the primitive types in Spearmint. There is no distinction between integers and floating point numbers, every number simply takes on the `num` type.
 
 ### Strings
 
@@ -83,6 +86,10 @@ let value = true;
 ### Objects
 
 The last primitive type in Spearmint is the object. Objects can be thought of as instances of classes, which will be discussed later. The important thing to remember is that if a variable is not one of the 3 aforementioned primitive types, then it *must* be an object. This has some implications that are discussed later.
+
+### Null (or the lack thereof)
+
+Spearmint does *not* have a `null` or `undefined` data type. To represent values that may not exist, Spearmint uses the `Maybe` type. This type will be discussed later, but it is important to keep in mind that all variables in Spearmint *must* have a value.
 
 ## Control flow
 
@@ -113,7 +120,7 @@ For loops are declared using the "for ... in" style. For loops can be used to it
 
 #### Ranges
 
-Ranges are one of the built in types of Spearmint. Because they are commonly used in for loops, syntactic sugar can be used to declare a new range.
+Ranges are one of the objects in the Spearmint standard library. Because they are so commonly used, there is syntactic sugar to create ranges.
 
 If a range is declared using two dots, the range will be exclusive of the upper bound. That is, a range such as
 
@@ -122,7 +129,7 @@ let range = 0..10;
 
 ```
 
-will include all of the numbers up to, but not including 10.
+will include all of the numbers from 0 up to, but not including 10.
 
 An inclusive range can be declared using three dots, like so
 
@@ -260,7 +267,7 @@ let add = (a: num, b: num) => a + b;
 Both regular functions and anonymous functions are first class objects in Spearmint, so they can be assigned to variables, passed as parameters and returned from functions just like other data types.
 
 ```sm
-fn apply(func: (arg: num) => nil, value: num) {
+fn apply(func: (arg: num) => None, value: num) {
   func(value);
 }
 
@@ -369,55 +376,93 @@ class Point {
     this.y *= factor;
   }
 }
+
 ```
 
 Again, the default is that methods are public, but they can be hidden by using `private`.
 
 ### Constructors
 
-The constructor function of a class can be defined by adding a method to the class with the name `new`. The constructor of a class can never be private.
+To construct an instance of a class, Spearmint uses a syntax similar to JSON. Each member of the class must be given a value when the class is constructed.
+
+```sm
+let p = Point {
+  x: 10,
+  y: 20,
+  id: 0,
+};
+
+```
+
+If a variable has the same name as one of the properties of the class, it can be used without specifying the name of the field.
+
+```sm
+let x = 10;
+let y = 20;
+
+let p = Point {
+  x, y,
+  id: 0,
+};
+
+```
+
+Instances of classes can always be created like this. There is no way to make the constructor of a class private.
+
+### Static methods
+
+Methods can be declared as static by adding the `static` keyword to the beginning of the declaration.
 
 ```sm
 class Point {
   // ...
 
-  new(x: num, y: num) {
-    this.x = x;
-    this.y = y;
+  static new(x: num, y: num) {
+    return Point {
+      x, y,
+      id: 0,
+    };
   }
+}
+
+let p = Point.new(10, 20);
+
+```
+
+Static methods do not have a `this` variable in their scope and thus cannot access any instance members of the class they belong to.
+
+### Pre assigned members
+
+In some cases it can be desirable to always assign the same value to a class member when that class is constructed. To do this, we can simply assign a value to it when it is declared.
+
+```sm
+class MyClass {
+  x: num;
+  y: num;
+  private id = 0;
 }
 
 ```
 
-#### Auto generated constructors
-
-The pattern of declaring a constructor which simply takes the class' members as parameters and assigns the parameters to the members is very common. Because of this, all classes in Spearmint have an automatically generated constructor method which does exactly this.
-
-The auto generated constructor will use the class members as parameters in the order they were declared. This means that if we didn't write a constructor for out `Point` class, the auto generated one would have looked like this.
+If a member is pre assigned, it does not have to be included when constructing an instance of the class. For example,
 
 ```sm
-class Point {
-  // ...
+// this is fine because `id` is pre assigned
+let p = Point {
+  x: 10,
+  y: 20,
+};
 
-  new(x: num y: num, id: num) {
-    this.x = x;
-    this.y = y;
-    this.id = id;
-  }
-}
+// this is still valid and will override the pre assigned value
+let p2 = Point {
+  x: 20,
+  y: 10,
+  id: 1,
+};
 
 ```
 
-Because a class can only have one constructor, manually writing one will override the auto generated constructor.
-
-#### Calling the constructor
-
-To construct a new instance of a class, the class name can simply be used like a method.
-
-```sm
-let point = Point(10, 20, 0);
-
-```
+Note that `this` cannot be used in pre assigned values.
 
 ### Inheritance
 
@@ -445,7 +490,7 @@ open class Point {
 
 With this change, our `Point3D` class no longer raises an error.
 
-Auto generated constructors in subclasses will first use the members of the parent class, and then the child class. For example in a structure like this
+Subclasses inherit all of the fields from their parent class, so the constructor for the subclass will include those fields. For example, given the following structure:
 
 ```sm
 open class A {
@@ -459,24 +504,64 @@ class B {
 
 ```
 
-The auto generated constructor for `B` would be equivalent to
+An instance of `B` would be constructed like this
 
 ```sm
-class B {
-  // ...
-
-  new(a: num, b: num, c: num) {
-    super(a, b);
-    this.c = c;
-  }
-}
+let b = B {
+  a: 0,
+  b: 1,
+  c: 2,
+};
 
 ```
 
 ### Abstract classes
 
-TODO
+Abstract classes are designed to be inherited from, and cannot be instantiated. A class can be marked as abstract using the `abstract` keyword
+
+```sm
+abstract class Node {
+
+}
+
+```
+
+Abstract classes are `open` by default. There is no way to create a closed abstract class.
+
+#### Abstract members and methods
+
+Abstract classes can contain members and methods in the same way that normal classes can.
+
+```sm
+abstract class Node {
+  kind: NodeKind;
+
+  isKind(kind: NodeKind) {
+    return this.kind === kind;
+  }
+}
+
+```
+
+However, methods in abstract classes can be marked as `abstract`. If they are marked as `abstract`, they do not require an implementation.
+
+```sm
+abstract class Node {
+  kind: NodeKind;
+
+  abstract isKind(kind: NodeKind): bool;
+}
+
+```
+
+Because the return type of an abstract method can never be inferred, a type annotation will always be required.
 
 ## Interfaces
 
 TODO
+
+## Enums
+
+TODO
+
+
